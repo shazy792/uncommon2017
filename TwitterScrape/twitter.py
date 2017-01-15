@@ -1,15 +1,19 @@
-NUM_COLLECTING = 1000
+NUM_COLLECTING = 2000
+uname = "coffee_dad"
+
 
 import urllib2
 import tweepy
-
-uname = "realDonaldTrump"
-
+'''
 consumer_key = "KrRt2ZVFSUG8xEiNLVucLhd0E"
 secret_key = "sqX8deTdvVJw8WjcwksmjRq7VrAhh69YW1NRhsbnoNaT2EV9Nw"
 access_token = "718548015779311616-r3AcIskbnvQvKnZX4rOKYrCp9TtgR9e"
 access_secret = "QPZkRr49Ogpovwe3t4rJAc9GFkzmLKTqVCIcWXeFtypGL"
-
+'''
+consumer_key = "fB7SCLvFfHslwnzd4Ep3q85Wa"
+secret_key = "KObsOCggBvNULofmJrZvgg0F8lzWKrbSDEgrDP0pHJiXeFsbgX"
+access_token = "820464951475273728-yGkpylHOnap6GlFxMFoLCnfhbjwvrxr"
+access_secret = "at0oNkQ0ytta2hWH1HrJjhq6oQHXlMDVhhkXXaSJRUrGJ"
 #Clean a string
 def clean(instring):
     outstring = ""
@@ -38,6 +42,28 @@ def main():
         i = 0
 
         auth = tweepy.OAuthHandler(consumer_key, secret_key)
+        ###
+        #Comment out when not harvesting new keys
+        '''
+        try:
+            redirect_url = auth.get_authorization_url()
+            print "Go to " + redirect_url
+        except tweepy.TweepError:
+            print 'Error! Failed to get request token.'
+
+        verifier = raw_input("Verifier: ")
+
+        try:
+            auth.get_access_token(verifier)
+        except tweepy.TweepError:
+            print 'Error! Failed to get access token.'
+
+        access_token = auth.access_token
+        access_secret = auth.access_token_secret
+        print access_token
+        print access_secret
+        '''
+        ###
         auth.set_access_token(access_token, access_secret)
         api = tweepy.API(auth)
 
@@ -72,6 +98,8 @@ def main():
         lastID = 0
         #Collects tweets back as far as our ceiling
         while i < NUM_COLLECTING :
+            if (len(timeline)<20):
+                i += NUM_COLLECTING
 
             for tweet in timeline:
                 i += 1
@@ -80,7 +108,7 @@ def main():
                 lastID = tweet.id
             timeline = get_timeline(api, lastID)
 
-        file = open(uname+'_data.tsv','w')
+        file = open('./data/'+uname+'_data.tsv','w')
 
         for tweet in tweets:
             i += 1
