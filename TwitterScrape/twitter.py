@@ -1,3 +1,5 @@
+NUM_COLLECTING = 1000
+
 import urllib2
 import tweepy
 
@@ -27,7 +29,7 @@ class tweet_Freq():
 
 
 def get_timeline(api, IDsince):
-    timeline = api.user_timeline(screen_name=uname, since_id=IDsince, include_rts=True, count =200)
+    timeline = api.user_timeline(screen_name=uname, max_id=IDsince, include_rts=True, count =200)
     return timeline
 
 def main():
@@ -68,7 +70,8 @@ def main():
             print ("Truncated:", tweet.truncated)
         '''
         lastID = 0
-        while i < 1000 :
+        #Collects tweets back as far as our ceiling
+        while i < NUM_COLLECTING :
 
             for tweet in timeline:
                 i += 1
@@ -77,7 +80,7 @@ def main():
                 lastID = tweet.id
             timeline = get_timeline(api, lastID)
 
-        file = open('data.tsv','w')
+        file = open(uname+'_data.tsv','w')
 
         for tweet in tweets:
             i += 1
