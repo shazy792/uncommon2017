@@ -6,7 +6,7 @@ from math import sqrt
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-filename = 'Trump.tsv'
+filename = '../TwitterScrape/data.tsv'
 
 def get_tweet(f):
     with open(f, 'rb') as csvfile:
@@ -21,6 +21,8 @@ def test_harness(test_tweets, test_scores, test_model, test_vectorizer):
     rms = sqrt(mean_squared_error(test_scores, predicted_scores))
     return rms
 
+
+cutoff = 700
 
 
 yielded = 0
@@ -43,9 +45,9 @@ for i in xrange(1,20):
     mf = i*1000
     bigram_vectorizer = TfidfVectorizer(ngram_range=(2,4), token_pattern=r'\b\w+\b', min_df=1, analyzer='word', max_features=mf)
     analyzer = bigram_vectorizer.build_analyzer()
-    x_2 = bigram_vectorizer.fit_transform(l[:133]).toarray()
+    x_2 = bigram_vectorizer.fit_transform(l[:cutoff]).toarray()
     clf = linear_model.LinearRegression()
-    clf.fit(x_2, scores[:133])
+    clf.fit(x_2, scores[:cutoff])
     print "rmse at maxfeatures = {}".format(i*1000)
-    print test_harness(l[133:], scores[133:], clf, bigram_vectorizer)   
+    print test_harness(l[cutoff:], scores[cutoff:], clf, bigram_vectorizer)   
 
