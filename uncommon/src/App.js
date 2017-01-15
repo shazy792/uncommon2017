@@ -4,14 +4,19 @@ import axios from 'axios';
 
 import './App.css';
 
+var config = {
+    headers: {'Access-Control-Allow-Origin': 'http://localhost:3000'}
+  };
+
 class App extends Component {
-  
+
   constructor(props){
     super(props);
     this.state = {
       tweet: '',
       user: '',
       ans: 0,
+      guess: '',
       img: "http://vignette2.wikia.nocookie.net/sawfilms/images/d/da/Iwannaplayagame.jpg/revision/latest?cb=20120227150040"
     }
   }  
@@ -28,29 +33,35 @@ class App extends Component {
     })
   }
 
+  onChangeGuess(e) {
+    this.setState({
+      guess: e.target.value
+    })
+  }
+
   onClick() {
     //alert(this.state.user + ': ' + this.state.tweet);
     // Call axios over here and then set state for output
-
-    /*axios.get('/user', {
+    axios.get('http://flask-env.dpumtvmq3q.us-east-2.elasticbeanstalk.com/tweets', {
       params: {
         user: this.state.user,
         tweet: this.state.tweet
       }
-    })
-    .then(function (response) {
+    }, config)
+    .then((response) => {
       this.setState({
-        ans: response
+        ans: response.data,
+        user: '',
+        tweet: '',
+        guess: ''
       })
     })
-    .catch(function (error) {
+    .catch((error) => {
       console.log(error);
-    });*/
+    });
 
     // if to change img state
-    this.setState({
-      ans: this.state.ans + 1
-    });
+    
   }
 
   onKeyPress(e) {
@@ -66,12 +77,16 @@ class App extends Component {
               <Grid.Row verticalAlign='middle' centered>
                   <Header size='medium' style={{color: 'white'}}>Wanna Play a Game?</Header>
                   <Input
+                    value={this.state.tweet}
+                    ref='inputTweet'
                     style={{padding: 5}}  
                     placeholder="Enter Tweet" 
                     onChange={this.onChangeTweet.bind(this)}
                   />
 
                   <Input
+                    value={this.state.user}
+                    ref='inputUser'
                     style={{padding: 5}}   
                     placeholder="Enter Username" 
                     onChange={this.onChangeUser.bind(this)}
@@ -79,10 +94,13 @@ class App extends Component {
                 </Grid.Row>
 
                 <Grid.Row>
-                  <Input 
+                  <Input
+                    value={this.state.guess}
+                    ref='inputGuess' 
                     placeholder='Your guess?'
                     style={{paddingRight: 5}}
                     onKeyPress={this.onKeyPress.bind(this)}
+                    onChange={this.onChangeGuess.bind(this)}
                   />
                   <Button
                     children="Check!"
