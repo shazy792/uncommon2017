@@ -5,6 +5,7 @@ from sklearn.metrics import mean_squared_error
 from math import sqrt
 
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
 
 filename = '../TwitterScrape/data.tsv'
 
@@ -35,19 +36,22 @@ for r in get_tweet(filename):
             l.append(r[0])
             scores.append(int(r[1]))
     yielded += 1
-    if yielded == 1000:
-        break
 
 from sklearn import linear_model
 
 
-for i in xrange(1,20):
+
+for i in xrange(1,5):
     mf = i*1000
-    bigram_vectorizer = TfidfVectorizer(ngram_range=(2,4), token_pattern=r'\b\w+\b', min_df=1, analyzer='word', max_features=mf)
+    bigram_vectorizer = CountVectorizer(ngram_range=(2,2), token_pattern=r'\b\w+\b', min_df=1, analyzer='word', max_features=mf)  # Stop list?
     analyzer = bigram_vectorizer.build_analyzer()
-    x_2 = bigram_vectorizer.fit_transform(l[:cutoff]).toarray()
+    train_set = l[5:cutoff]
+    x_2 = bigram_vectorizer.fit_transform(train_set).toarray()
     clf = linear_model.LinearRegression()
-    clf.fit(x_2, scores[:cutoff])
-    print "rmse at maxfeatures = {}".format(i*1000)
-    print test_harness(l[cutoff:], scores[cutoff:], clf, bigram_vectorizer)   
+    clf.fit(x_2, scores[5:cutoff])
+    print "rmse at maxfeatures = {}".format(mf)
+    print test_harness(l[cutoff:], scores[cutoff:], clf, bigram_vectorizer)
+    print '11355'
+    print clf.predict(bigram_vectorizer.transform(['I have NOTHING to do with The Apprentice except for fact that I conceived it with Mark B &amp; have a big stake in it. Will devote ZERO TIME!']).toarray())
+    
 
