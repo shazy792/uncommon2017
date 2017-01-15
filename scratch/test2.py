@@ -1,57 +1,62 @@
 #!/usr/bin/env python
 
 import csv
+from sklearn.metrics import mean_squared_error
+from math import sqrt
 
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
 
-filename = '/home/geoffowens/training.1600000.processed.noemoticon.csv'
+filename = '../TwitterScrape/data.tsv'
 
 def get_tweet(f):
     with open(f, 'rb') as csvfile:
-        datareader = csv.reader(csvfile)
+        datareader = csv.reader(csvfile, delimiter='\t')
         count = 0
         for row in datareader:
             yield row
 
+def test_harness(test_tweets, test_scores, test_model, test_vectorizer):
+    vectorized_test_tweets = test_vectorizer.transform(test_tweets).toarray()
+    predicted_scores = test_model.predict(vectorized_test_tweets).tolist()
+    rms = sqrt(mean_squared_error(test_scores, predicted_scores))
+    return rms
+
+
+cutoff = 700
+
+
 yielded = 0
 l = []
+scores = []
 
 
 for r in get_tweet(filename):
-    if yielded == 1:
-        print r
-    l.append(r[5])
+    if len(r) >= 2:
+            l.append(r[0])
+            scores.append(int(r[1]))
     yielded += 1
-    if yielded == 1000:
-        break
-
-
-
-vectorizer = TfidfVectorizer(min_df=1)
-
-X = vectorizer.fit_transform(l)
-print vectorizer.transform(['@bob what an incredible morning!']).toarray()
-
-bigram_vectorizer = TfidfVectorizer(ngram_range=(1,2), token_pattern=r'\b\w+\b', min_df=1, stop_words='english', max_features=10)
-analyzer = bigram_vectorizer.build_analyzer()
-
-corpus = ['This is the first document.', 'This is the second second document.', 'And the third one.', 'Is this the first document?']
-
-import random
-corpus_scores = [random.randint(1, 10) for _ in xrange(1000)]
-
-
-x_2 = bigram_vectorizer.fit_transform(l).toarray()
-print x_2
-
-test = bigram_vectorizer.transform(['@scott i\'m so upset we have Facebook on school tomorrow'])
-test2 = bigram_vectorizer.transform(['This is a highly technical message which would be improbable to appear in a tweet'])
 
 from sklearn import linear_model
 
-clf = linear_model.LinearRegression()
-clf.fit(x_2, corpus_scores)
 
-print clf.coef_
-print clf.predict(test)
-print clf.predict(test2)
+
+for i in xrange(1,5):
+    mf = i*1000
+    bigram_vectorizer = CountVectorizer(token_pattern=r'\b\w+\b', min_df=1, analyzer='word', max_features=mf)  # Stop list?
+    analyzer = bigram_vectorizer.build_analyzer()
+    train_set = l[5:700]
+    x_2 = bigram_vectorizer.fit_transform(train_set).toarray()
+    clf = linear_model.LinearRegression()
+    clf.fit(x_2, scores[5:700])
+    print "rmse at maxfeatures = {}".format(mf)
+    print test_harness(l[cutoff:], scores[cutoff:], clf, bigram_vectorizer)
+    print '11355'
+    print clf.predict(bigram_vectorizer.transform(['Wow! Amazing how many voters! Make america great again.']).toarray())
+    from sklearn import datasets
+    datasets.clear_data_home()
+    del analyzer
+    del bigram_vectorizer
+    del clf
+    
+
