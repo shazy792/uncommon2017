@@ -48,13 +48,13 @@ def index():
 
 @application.route('/twit', methods=['GET'])
 def twit():
-    print request.headers['uname']
+    print request.headers['user']
     return "request"
 
 @application.route('/tweets', methods=['GET'])
 def count_tweets():
-    uname = request.headers['uname']
-    twweet = request.headers['tweet']
+    uname = request.headers['user']
+    twweet = request.headers['tweets']
     tweets = []
     scores = []
     outstring = ""
