@@ -54,7 +54,7 @@ from sklearn import neural_network
 
 for i in xrange(1,2):
     mf = i*1000
-    bigram_vectorizer = CountVectorizer(ngram_range=(1,1), token_pattern=r'\b\w+\b', min_df=1, analyzer='word', max_features=None, stop_words='english')
+    bigram_vectorizer = TfidfVectorizer(ngram_range=(1,1), token_pattern=r'\b\w+\b', min_df=1, analyzer='word', max_features=None, stop_words='english')
     analyzer = bigram_vectorizer.build_analyzer()
     x_2 = bigram_vectorizer.fit_transform(tweets).toarray()
     clf = neural_network.MLPRegressor(hidden_layer_sizes=(100,100), max_iter=1000, solver='adam')
