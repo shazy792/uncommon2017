@@ -3,11 +3,12 @@
 import csv
 from sklearn.metrics import mean_squared_error
 from math import sqrt
+import sys
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
 
-filename = '../TwitterScrape/data.tsv'
+filename = sys.argv[1]
 
 def get_tweet(f):
     with open(f, 'rb') as csvfile:
@@ -23,7 +24,6 @@ def test_harness(test_tweets, test_scores, test_model, test_vectorizer):
     return rms
 
 
-cutoff = 700
 
 
 yielded = 0
@@ -35,28 +35,26 @@ for r in get_tweet(filename):
     if len(r) >= 2:
             l.append(r[0])
             scores.append(int(r[1]))
-    yielded += 1
+
+import numpy as np
+print np.mean(scores)
+print len(scores)
+cutoff = int(len(scores) * .7)
+print cutoff
 
 from sklearn import linear_model
 
 
 
-for i in xrange(1,5):
+for i in xrange(1,10):
     mf = i*1000
-    bigram_vectorizer = CountVectorizer(token_pattern=r'\b\w+\b', min_df=1, analyzer='word', max_features=mf)  # Stop list?
+    bigram_vectorizer = TfidfVectorizer(ngram_range=(1,1), token_pattern=r'\b\w+\b', min_df=1, analyzer='word', max_features=mf, stop_words='english')
     analyzer = bigram_vectorizer.build_analyzer()
-    train_set = l[5:700]
+    train_set = l[:cutoff]
     x_2 = bigram_vectorizer.fit_transform(train_set).toarray()
-    clf = linear_model.LinearRegression()
-    clf.fit(x_2, scores[5:700])
+    clf = linear_model.LogisticRegression()
+    clf.fit(x_2, scores[:cutoff])
     print "rmse at maxfeatures = {}".format(mf)
     print test_harness(l[cutoff:], scores[cutoff:], clf, bigram_vectorizer)
-    print '11355'
-    print clf.predict(bigram_vectorizer.transform(['Wow! Amazing how many voters! Make america great again.']).toarray())
-    from sklearn import datasets
-    datasets.clear_data_home()
-    del analyzer
-    del bigram_vectorizer
-    del clf
     
 
