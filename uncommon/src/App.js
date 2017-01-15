@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Input, Button, Statistic, Grid } from 'semantic-ui-react';
+import { Input, Button, Statistic, Grid, Image, Header } from 'semantic-ui-react';
 import axios from 'axios';
 
 import './App.css';
@@ -11,7 +11,8 @@ class App extends Component {
     this.state = {
       tweet: '',
       user: '',
-      ans: 0
+      ans: 0,
+      img: "http://vignette2.wikia.nocookie.net/sawfilms/images/d/da/Iwannaplayagame.jpg/revision/latest?cb=20120227150040"
     }
   }  
 
@@ -46,44 +47,61 @@ class App extends Component {
       console.log(error);
     });*/
 
+    // if to change img state
     this.setState({
       ans: this.state.ans + 1
     });
   }
 
+  onKeyPress(e) {
+    if (e.charCode === 13) {
+      this.onClick();
+    }
+  }
+
   render() {
     return (
-          <Grid celled='internally' verticalAlign='middle' columns={1} centered style={{paddingTop: 50}}>
-            <Grid.Row verticalAlign='middle' centered>
-              <Grid.Column>
-                <Input
-                  style={{padding: 5}}  
-                  placeholder="Enter Tweet" 
-                  onChange={this.onChangeTweet.bind(this)}
-                />
+          <Grid celled='internally' verticalAlign='middle' columns={1} centered style={{paddingTop: 7}}>
+            <Grid.Column>
+              <Grid.Row verticalAlign='middle' centered>
+                  <Header size='medium' style={{color: 'white'}}>Wanna Play a Game?</Header>
+                  <Input
+                    style={{padding: 5}}  
+                    placeholder="Enter Tweet" 
+                    onChange={this.onChangeTweet.bind(this)}
+                  />
 
-                <Input
-                  style={{padding: 5}}   
-                  placeholder="Enter Username" 
-                  onChange={this.onChangeUser.bind(this)}
-                />
+                  <Input
+                    style={{padding: 5}}   
+                    placeholder="Enter Username" 
+                    onChange={this.onChangeUser.bind(this)}
+                  />
+                </Grid.Row>
 
-                <Button 
-                  children="Enter" 
-                  onClick={this.onClick.bind(this)}
-                />
+                <Grid.Row>
+                  <Input 
+                    placeholder='Your guess?'
+                    style={{paddingRight: 5}}
+                    onKeyPress={this.onKeyPress.bind(this)}
+                  />
+                  <Button
+                    children="Check!"
+                    onClick={this.onClick.bind(this)}
+                  />
+                </Grid.Row>
 
-
-                <Grid.Row verticalAlign='middle' style={{paddingTop: 50}} centered>
-                  <Statistic size={'huge'}>
-                    <Statistic.Label>Retweets</Statistic.Label>
-                    <Statistic.Value>{this.state.ans}</Statistic.Value>
+                <Grid.Row verticalAlign='middle' style={{paddingTop: 5}} centered>
+                  <Statistic style={{color: 'white'}}>
+                    <Statistic.Label style={{color: 'white'}}>Retweets</Statistic.Label>
+                    <Statistic.Value style={{color: 'white'}}>{this.state.ans}</Statistic.Value>
                   </Statistic>      
+                </Grid.Row>
+
+                <Grid.Row verticalAlign='bottom' style={{paddingTop: 5}} centered>
+                  <Image src={this.state.img} size='large' centered shape='rounded'/>
                 </Grid.Row>
           
               </Grid.Column>
-              
-            </Grid.Row>
             
           </Grid>
     );

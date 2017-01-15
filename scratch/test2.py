@@ -53,10 +53,10 @@ from sklearn import linear_model
 
 for i in xrange(1,10):
     mf = i*1000
-    bigram_vectorizer = TfidfVectorizer(ngram_range=(1,1), token_pattern=r'\b\w+\b', min_df=1, analyzer='word', max_features=mf, stop_words='english')
+    bigram_vectorizer = CountVectorizer(ngram_range=(1,1), token_pattern=r'\b\w+\b', min_df=1, analyzer='word', max_features=mf, stop_words='english')
     analyzer = bigram_vectorizer.build_analyzer()
     x_2 = bigram_vectorizer.fit_transform(tweets).toarray()
     clf = linear_model.PassiveAggressiveRegressor()
     clf.fit(x_2, scores)
-    print "rmse at maxfeatures = {}".format(mf)
-    print test_harness(test_tweets, test_scores, clf, bigram_vectorizer)
+    rmse = test_harness(test_tweets, test_scores, clf, bigram_vectorizer)
+    print "rmse at maxfeatures: {} is {}".format(mf, rmse)
