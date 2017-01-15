@@ -10,12 +10,10 @@ import tweepy
 #TODO: user will need to be inuput-based
 uname = "realDonaldTrump"
 
-consumer_key = "KrRt2ZVFSUG8xEiNLVucLhd0E"
-secret_key = "sqX8deTdvVJw8WjcwksmjRq7VrAhh69YW1NRhsbnoNaT2EV9Nw"
-access_token = "718548015779311616-r3AcIskbnvQvKnZX4rOKYrCp9TtgR9e"
-access_secret = "QPZkRr49Ogpovwe3t4rJAc9GFkzmLKTqVCIcWXeFtypGL"
-
-session = {}
+consumer_key = "fB7SCLvFfHslwnzd4Ep3q85Wa"
+secret_key = "KObsOCggBvNULofmJrZvgg0F8lzWKrbSDEgrDP0pHJiXeFsbgX"
+access_token = "820464951475273728-yGkpylHOnap6GlFxMFoLCnfhbjwvrxr"
+access_secret = "at0oNkQ0ytta2hWH1HrJjhq6oQHXlMDVhhkXXaSJRUrGJ"
 
 #Tweet frequency object
 class tweet_Freq():
@@ -96,14 +94,14 @@ def index():
 
     try:
         redirect_url = auth.get_authorization_url()
-        webbrowser.open_new_tab(redirect_url)
-        return handle_verifier(auth)
+        #webbrowser.open_new_tab(redirect_url)
+        #return handle_verifier(auth)
     except tweepy.TweepError:
         print "Error! Failed to get request token."
 
 
 
-
+    return "Hello, World"
 
 
 
